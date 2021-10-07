@@ -1,4 +1,5 @@
 import unreal
+import csv
 
 asset_path = "/Game/Meshes"
 
@@ -10,6 +11,7 @@ def check_lods(static_mesh):
     lod_no = unreal.EditorStaticMeshLibrary.get_lod_count(static_mesh)
     print(f"Mesh name: {static_mesh.get_name()}")
     print(f"current LOD count: {lod_no}")
+    return lod_no
 
 
 """def apply_lods(static_mesh):
@@ -36,9 +38,12 @@ def get_material_count(static_mesh):
     material_count = sm_component.get_material_overrides_count()
 
     print(f"Current number of materials on this mesh: {material_count}")
+    return material_count
 
 
 if __name__ == "__main__":
+    mesh_properties = []
+
     all_assets = unreal.EditorAssetLibrary.list_assets(asset_path)
     static_mesh = unreal.StaticMeshComponent.static_mesh
 
@@ -52,4 +57,16 @@ if __name__ == "__main__":
     """list(map(apply_lods, static_mesh_assets))"""
 
     for mesh in static_mesh_assets:
-        get_material_count(mesh)
+        mesh_info = {}
+        lod_count = check_lods(mesh)
+        material_count = get_material_count(mesh)
+        mesh_info["material_count"] = material_count
+        mesh_info["lod_count"] = lod_count
+        mesh_properties.append(mesh_info)
+
+        keys = mesh_properties[0].keys()
+
+    with open("meshProperties.csv", "w", newline="") as output_file:
+        dict_writer = csv.DictWriter(output_file, keys)
+        dict_writer.writeheader()
+        dict_writer.writerows(mesh_properties)
