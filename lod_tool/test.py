@@ -1,15 +1,20 @@
 import unreal
 import csv
+import pathlib
+from pathlib import Path
 
 asset_path = "/Game/Meshes"
 
 """for material_index in range(0, static_mesh.get_num_sections(0)):
     material_name = static_mesh.get_material(material_index).get_name()"""
 
+def get_mesh_name(static_mesh):
+    mesh_name = static_mesh.get_name()
+    print(f"Mesh name: {mesh_name}")
+    return mesh_name
 
 def check_lods(static_mesh):
     lod_no = unreal.EditorStaticMeshLibrary.get_lod_count(static_mesh)
-    print(f"Mesh name: {static_mesh.get_name()}")
     print(f"current LOD count: {lod_no}")
     return lod_no
 
@@ -58,15 +63,22 @@ if __name__ == "__main__":
 
     for mesh in static_mesh_assets:
         mesh_info = {}
+        mesh_name= get_mesh_name(mesh)
         lod_count = check_lods(mesh)
         material_count = get_material_count(mesh)
+        mesh_info['mesh_name'] = mesh_name
         mesh_info["material_count"] = material_count
         mesh_info["lod_count"] = lod_count
         mesh_properties.append(mesh_info)
 
-        keys = mesh_properties[0].keys()
+    keys = mesh_properties[0].keys()
 
-    with open("meshProperties.csv", "w", newline="") as output_file:
+    path = Path('H:/LODtool/Unreal/LOD_tryout/Content') 
+    path.mkdir(parents=True, exist_ok=True)
+
+    file_path = (path / 'meshProperties').with_suffix('.csv')
+
+    with file_path.open(mode='w+') as output_file:
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
         dict_writer.writerows(mesh_properties)
