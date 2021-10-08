@@ -3,17 +3,19 @@ import csv
 import pathlib
 from pathlib import Path
 
-asset_path = "/Game/Meshes"
+asset_path = "/Game/Ana_Iancu/Meshes"
 
 """for material_index in range(0, static_mesh.get_num_sections(0)):
     material_name = static_mesh.get_material(material_index).get_name()"""
 
 def get_mesh_name(static_mesh):
+    #Gets the name of the static mesh
     mesh_name = static_mesh.get_name()
     print(f"Mesh name: {mesh_name}")
     return mesh_name
 
 def check_lods(static_mesh):
+    #Checks number of LODs for each mesh
     lod_no = unreal.EditorStaticMeshLibrary.get_lod_count(static_mesh)
     print(f"current LOD count: {lod_no}")
     return lod_no
@@ -38,16 +40,26 @@ def check_lods(static_mesh):
     print(f"New LOD count: {unreal.EditorStaticMeshLibrary.get_lod_count(static_mesh)}")"""
 
 
-def get_material_count(static_mesh):
+'''def get_material_count(static_mesh):
+    #Gets the number of materials for each mesh
     sm_component = unreal.DatasmithMeshActorElement()
     material_count = sm_component.get_material_overrides_count()
 
     print(f"Current number of materials on this mesh: {material_count}")
-    return material_count
+    return material_count'''
 
+def get_material_count(static_mesh):
+    selected_obj = unreal.EditorUtilityLibrary.get_selected_asset_data()[0]
+
+    selected_actor = selected_obj.get_asset()
+
+    num_of_materials = unreal.EditorStaticMeshLibrary.get_number_materials(selected_actor)
+
+    print(f"Current number of materials: {num_of_materials}")
+    return num_of_materials
 
 if __name__ == "__main__":
-    mesh_properties = []
+    mesh_properties = [] #List of dicts to be used in the csv file
 
     all_assets = unreal.EditorAssetLibrary.list_assets(asset_path)
     static_mesh = unreal.StaticMeshComponent.static_mesh
@@ -58,10 +70,12 @@ if __name__ == "__main__":
         all_assets_loaded, unreal.StaticMesh
     )
 
-    list(map(check_lods, static_mesh_assets))
+    '''list(map(check_lods, static_mesh_assets))'''
     """list(map(apply_lods, static_mesh_assets))"""
 
-    for mesh in static_mesh_assets:
+
+
+    for mesh in static_mesh_assets: 
         mesh_info = {}
         mesh_name= get_mesh_name(mesh)
         lod_count = check_lods(mesh)
@@ -82,3 +96,6 @@ if __name__ == "__main__":
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
         dict_writer.writerows(mesh_properties)
+
+
+
