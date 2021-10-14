@@ -3,7 +3,7 @@ import csv
 import pathlib
 from pathlib import Path
 
-asset_path = "/Game/Ana_Iancu/Meshes"
+asset_path = "/Game/Meshes"
 
 """for material_index in range(0, static_mesh.get_num_sections(0)):
     material_name = static_mesh.get_material(material_index).get_name()"""
@@ -58,6 +58,17 @@ def get_material_count(static_mesh):
     print(f"Current number of materials: {num_of_materials}")
     return num_of_materials
 
+
+
+def get_asset_triangle_count(static_mesh):
+    selected_obj = unreal.EditorUtilityLibrary.get_selected_asset_data()[0]
+    selected_actor = selected_obj.get_asset()
+    poly_count = unreal.EditableMesh.get_polygon_count(selected_actor)
+
+    print(f"Number of polys for this mesh: {poly_count}")
+    return poly_count
+
+
 if __name__ == "__main__":
     mesh_properties = [] #List of dicts to be used in the csv file
 
@@ -80,9 +91,11 @@ if __name__ == "__main__":
         mesh_name= get_mesh_name(mesh)
         lod_count = check_lods(mesh)
         material_count = get_material_count(mesh)
+        poly_count = get_asset_triangle_count(mesh)
         mesh_info['mesh_name'] = mesh_name
         mesh_info["material_count"] = material_count
         mesh_info["lod_count"] = lod_count
+        mesh_info['polygon_count'] = poly_count
         mesh_properties.append(mesh_info)
 
     keys = mesh_properties[0].keys()
