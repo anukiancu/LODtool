@@ -4,7 +4,6 @@ import pathlib
 from pathlib import Path
 
 asset_path = "/Game/Meshes"
-selected_assets = get_selected_asset()
 
 def check_lods(static_mesh):
     # Checks number of LODs for each mesh
@@ -32,6 +31,18 @@ def get_num_mesh_materials(obj):
     print(f"Current number of materials for this mesh {num_of_materials}")
     return(num_of_materials)
 
+def get_simple_collision_count(obj):
+    collision_count = unreal.EditorStaticMeshLibrary.get_simple_collision_count(obj)
+    print (f"Number of simple collisions present on this mesh: {collision_count}")
+    return collision_count
+
+def get_polygon_count(obj):
+    editable_mesh = unreal.EditableMeshFactory.make_editable_mesh(obj, 0)
+    poly_count = unreal.EditableMesh.get_polygon_count(editable_mesh)
+    print(f"Polygon count for this mesh: {poly_count}")
+    return poly_count
+
+selected_assets = get_selected_asset()
 
 '''for asset in selected_assets:
     #asset_name = get_mesh_name(asset)
@@ -45,15 +56,19 @@ if __name__ == "__main__":
     for assets in selected_assets:
         mesh_info = {}
         mesh_name = get_mesh_name(assets)
-        #bounding_box = get_bounding_box(mesh)
+        #bounding_box = get_bounding_box(assets)
         #lod_screen_size = get_lod_screen_size(mesh)
         lod_count = check_lods(assets)
         material_count = get_num_mesh_materials(assets)
+        simple_collission_count = get_simple_collision_count(assets)
+        poly_count = get_polygon_count(assets)
         #poly_count = get_asset_triangle_count(mesh)
         mesh_info["mesh_name"] = mesh_name
-       # mesh_info["bounding_box"] = bounding_box
+        #mesh_info["bounding_box"] = bounding_box
         mesh_info["material_count"] = material_count
         mesh_info["lod_count"] = lod_count
+        mesh_info["simple_collisions"] = simple_collission_count
+        mesh_info["polygon_count"] = poly_count
         #mesh_info["LOD_screen_size"] = lod_screen_size
         #mesh_info["polygon_count"] = poly_count
         mesh_properties.append(mesh_info)
