@@ -69,13 +69,17 @@ def get_tri_count(obj):
     print(f"Number of tris for this mesh: {total_tris}")
     return total_tris
 
+def get_lod_screen_size(obj):
+    lod_screen_size = unreal.EditorStaticMeshLibrary.get_lod_screen_sizes(obj)
+    print(f"LOD screen size: {lod_screen_size}")
+    return lod_screen_size
 
 def get_tris(obj):
-    inst = unreal.EditableMeshFactory()
-    instt = unreal.EditableMesh()
-    editable_mesh = inst.make_editable_mesh(obj, 0)
+    mesh_factory = unreal.EditableMeshFactory()
+    editable_mesh = unreal.EditableMesh()
+    make_editable_mesh = mesh_factory.make_editable_mesh(obj, 0)
     # poly_group = instt.create_polygon_groups(polygon_group_attributes = [[]], original_polygon_group_id=[])
-    poly_count = instt.get_polygon_count(editable_mesh)
+    poly_count = editable_mesh.get_polygon_count(make_editable_mesh)
     print(f"Polygon count: {poly_count}")
     return poly_count
 
@@ -99,7 +103,8 @@ if __name__ == "__main__":
         lod_count = check_lods(assets)
         material_count = get_num_mesh_materials(assets)
         simple_collission_count = get_simple_collision_count(assets)
-        poly_count = get_tris(assets)
+        lod_screen_size = get_lod_screen_size(assets)
+        #poly_count = get_tris(assets)
         # lod_settings = get_lod_info(assets)
         # tri_count = get_tri_count(assets)
         # poly_count = get_polygon_count(assets)
@@ -109,6 +114,7 @@ if __name__ == "__main__":
         mesh_info["material_count"] = material_count
         mesh_info["lod_count"] = lod_count
         mesh_info["simple_collisions"] = simple_collission_count
+        mesh_info['LOD_screen_size'] = lod_screen_size
         # mesh_info["LOD_settings"] = lod_settings
         # mesh_info["tri_count"] = tri_count
         # mesh_info["polygon_count"] = poly_count
@@ -118,7 +124,7 @@ if __name__ == "__main__":
 
     keys = mesh_properties[0].keys()
 
-    path = Path("I:/WIPs/LOD_tool_project/LODtool/Content")
+    path = Path("H:/LODtool/Unreal/LOD_tryout/Content")
     path.mkdir(parents=True, exist_ok=True)
 
     file_path = (path / "meshProperties").with_suffix(".csv")
