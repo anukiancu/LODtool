@@ -76,6 +76,7 @@ def get_lod_triangles(static_mesh):
         print(
             f"LOD number {lod_detail_dict.get('lod_number')} has {lod_detail_dict.get('triangle_count')} triangles.\n"
         )
+
     return lod_details
 
 
@@ -101,21 +102,13 @@ if __name__ == "__main__":
     for assets in selected_assets:
         mesh_info = {}
         mesh_name = get_mesh_name(assets)
-        # bounding_box = get_bounding_box(assets)
-        # lod_screen_size = get_lod_screen_size(mesh)
         lod_count = check_lods(assets)
         material_count = get_num_mesh_materials(assets)
         simple_collission_count = get_simple_collision_count(assets)
         lod_screen_size = get_lod_screen_size(assets)
         bounding_box = get_bounding_box(assets)
-        # poly_count = get_tris(assets)
-        # lod_settings = get_lod_info(assets)
-        # tri_count = get_tri_count(assets)
-        # poly_count = get_polygon_count(assets)
-        # poly_count = get_asset_triangle_count(mesh)
         fucking_hell = get_lod_triangles(assets)
         mesh_info["mesh_name"] = mesh_name
-        # mesh_info["bounding_box"] = bounding_box
         mesh_info["material_count"] = material_count
         mesh_info["lod_count"] = lod_count
         mesh_info["simple_collisions"] = simple_collission_count
@@ -123,11 +116,6 @@ if __name__ == "__main__":
         mesh_info["LOD_triangles"] = fucking_hell
         mesh_info["box_min"] = bounding_box.min
         mesh_info["box_max"] = bounding_box.max
-        # mesh_info["LOD_settings"] = lod_settings
-        # mesh_info["tri_count"] = tri_count
-        # mesh_info["polygon_count"] = poly_count
-        # mesh_info["LOD_screen_size"] = lod_screen_size
-        # mesh_info["polygon_count"] = poly_count
         mesh_properties.append(mesh_info)
 
     keys = mesh_properties[0].keys()
