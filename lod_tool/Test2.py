@@ -39,6 +39,12 @@ def get_simple_collision_count(obj):
     print(f"Number of simple collisions present on this mesh: {collision_count}")
     return collision_count
 
+def get_verts(obj):
+    lod_no = unreal.EditorStaticMeshLibrary.get_lod_count(obj)
+    for lod in range(lod_no):
+        verts_no = unreal.EditorStaticMeshLibrary.get_number_verts(obj, lod)
+        print(f"Number of verts for LOD {lod}: {verts_no}")
+    return verts_no
 
 def get_tri_count(obj):
     inst = obj.create_static_mesh_description()
@@ -60,6 +66,7 @@ def get_lod_triangles(static_mesh):
     lod_details = []
 
     lod_no = unreal.EditorStaticMeshLibrary.get_lod_count(static_mesh)
+    unreal.EditorStaticMeshLibrary.set_allow_cpu_access(static_mesh, True)
 
     for lod in range(lod_no):
         triangle_count = 0
@@ -81,17 +88,24 @@ def get_lod_triangles(static_mesh):
 
 
 def get_lod_screen_size(obj):
-    lod_screen_size = unreal.EditorStaticMeshLibrary.get_lod_screen_sizes(obj)
-    print(f"LOD screen size: {lod_screen_size}")
-    return lod_screen_size
+    lod_no = unreal.EditorStaticMeshLibrary.get_lod_count(obj)
+    lod_screen_sizes = []
+    for lod in range(lod_no):
+        lod_screen_size = unreal.EditorStaticMeshLibrary.get_lod_screen_sizes(obj)
+        lod_screen_size_dict = {"lod_number": lod, "screen_size": lod_screen_size}
+        lod_screen_sizes.append(lod_screen_size_dict)
 
+    for lod_screen_size_dict in lod_screen_sizes:
+        print(
+            f"LOD number {lod_screen_size_dict.get('lod_number')} has a screen size of {lod_screen_size_dict.get('screen_size')}")
+        
+    return lod_screen_sizes
 
-def get_bounding_box(obj):
-    bounding_box = obj.get_bounding_box()
-
-    print(f"Bounding box: {bounding_box.max}")
-    print(f"Bounding box: {bounding_box.min}")
-    return bounding_box
+def get_bounds(obj):
+    bounds = obj.get_bounds()
+    radius = bounds.sphere_radius
+    print(f"Bounding sphere radius: {radius}")
+    return radius
 
 
 selected_assets = get_selected_asset()
@@ -106,21 +120,22 @@ if __name__ == "__main__":
         material_count = get_num_mesh_materials(assets)
         simple_collission_count = get_simple_collision_count(assets)
         lod_screen_size = get_lod_screen_size(assets)
-        bounding_box = get_bounding_box(assets)
         fucking_hell = get_lod_triangles(assets)
+        verts = get_verts(assets)
+        bounds = get_bounds(assets)
         mesh_info["mesh_name"] = mesh_name
         mesh_info["material_count"] = material_count
         mesh_info["lod_count"] = lod_count
         mesh_info["simple_collisions"] = simple_collission_count
         mesh_info["LOD_screen_size"] = lod_screen_size
         mesh_info["LOD_triangles"] = fucking_hell
-        mesh_info["box_min"] = bounding_box.min
-        mesh_info["box_max"] = bounding_box.max
+        mesh_info["verts_number"] = verts
+        mesh_info["bounding_sphere_radius"] = bounds
         mesh_properties.append(mesh_info)
 
     keys = mesh_properties[0].keys()
 
-    path = Path("I:/WIPs/LOD_tool_project/LODtool/Content")
+    path = Path("H:/LODtool/Unreal/LOD_tryout/Content")
     path.mkdir(parents=True, exist_ok=True)
 
     file_path = (path / "meshProperties").with_suffix(".csv")
