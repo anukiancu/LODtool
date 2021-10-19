@@ -11,6 +11,8 @@ def check_lods(static_mesh):
     print(f"Current LOD count for this mesh: {lod_no}")
     return lod_no
 
+def remove_lods(static_mesh):
+    unreal.EditorStaticMeshLibrary.remove_lods(static_mesh)
 
 def get_mesh_name(static_mesh):
     # Gets the name of the static mesh
@@ -19,7 +21,7 @@ def get_mesh_name(static_mesh):
     return mesh_name
 
 
-def get_selected_asset():
+def get_s_asset():
     all_assets = unreal.EditorAssetLibrary.list_assets(asset_path)
     all_assets_loaded = [unreal.EditorAssetLibrary.load_asset(a) for a in all_assets]
     static_mesh_assets = unreal.EditorFilterLibrary.by_class(
@@ -104,33 +106,47 @@ def get_lod_screen_size(obj):
 def get_bounds(obj):
     bounds = obj.get_bounds()
     radius = bounds.sphere_radius
-    print(f"Bounding sphere radius: {radius}")
-    return radius
+    diameter = radius *2
+    print(f"Bounding sphere diameter: {diameter}")
+    return diameter
+
+def get_vertex_density(obj):
+    bounds = obj.get_bounds()
+    radius = bounds.sphere_radius
+    diameter = radius *2
+    lod_no = unreal.EditorStaticMeshLibrary.get_lod_count(obj)
+    for lod in range(lod_no):
+        verts_no = unreal.EditorStaticMeshLibrary.get_number_verts(obj, lod)
+        vertex_density = verts_no/diameter
+        print(f"Vertex density for LOD {lod} : {vertex_density}")
+    return vertex_density
 
 
-selected_assets = get_selected_asset()
+selected_assets = get_s_asset()
+assets = unreal.EditorUtilityLibrary.get_selected_assets()
+
 
 
 if __name__ == "__main__":
     mesh_properties = []
-    for assets in selected_assets:
+    for asset in assets:
         mesh_info = {}
-        mesh_name = get_mesh_name(assets)
-        lod_count = check_lods(assets)
-        material_count = get_num_mesh_materials(assets)
-        simple_collission_count = get_simple_collision_count(assets)
-        lod_screen_size = get_lod_screen_size(assets)
-        fucking_hell = get_lod_triangles(assets)
-        verts = get_verts(assets)
-        bounds = get_bounds(assets)
+        mesh_name = get_mesh_name(asset)
+        lod_count = check_lods(asset)
+        material_count = get_num_mesh_materials(asset)
+        simple_collission_count = get_simple_collision_count(asset)
+        lod_screen_size = get_lod_screen_size(asset)
+        fucking_hell = get_lod_triangles(asset)
+        vertex_density = get_vertex_density(asset)
+        bounds = get_bounds(asset)
         mesh_info["mesh_name"] = mesh_name
         mesh_info["material_count"] = material_count
         mesh_info["lod_count"] = lod_count
         mesh_info["simple_collisions"] = simple_collission_count
         mesh_info["LOD_screen_size"] = lod_screen_size
         mesh_info["LOD_triangles"] = fucking_hell
-        mesh_info["verts_number"] = verts
         mesh_info["bounding_sphere_radius"] = bounds
+        mesh_info["vertex_density"] = vertex_density
         mesh_properties.append(mesh_info)
 
     keys = mesh_properties[0].keys()
