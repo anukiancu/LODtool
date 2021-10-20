@@ -1,6 +1,7 @@
 import unreal
 import csv
 from pathlib import Path
+import os
 
 asset_path = "/Game/Meshes"
 
@@ -8,7 +9,7 @@ asset_path = "/Game/Meshes"
 def check_lods(static_mesh):
     # Checks number of LODs for each mesh
     lod_no = unreal.EditorStaticMeshLibrary.get_lod_count(static_mesh)
-    print(f"Current LOD count for this mesh: {lod_no}")
+    print(f"Current LOD count for mesh {mesh_name}: {lod_no}")
     return lod_no
 
 def remove_lods(static_mesh):
@@ -32,7 +33,7 @@ def get_s_asset():
 
 def get_num_mesh_materials(obj):
     num_of_materials = unreal.EditorStaticMeshLibrary.get_number_materials(obj)
-    print(f"Current number of materials for this mesh {num_of_materials}")
+    print(f"Current number of materials for mesh {mesh_name}: {num_of_materials}")
     return num_of_materials
 
 
@@ -107,7 +108,7 @@ def get_bounds(obj):
     bounds = obj.get_bounds()
     radius = bounds.sphere_radius
     diameter = radius *2
-    print(f"Bounding sphere diameter: {diameter}")
+    print(f"Bounding sphere diameter of mesh {mesh_name}: {diameter}")
     return diameter
 
 def get_vertex_density(obj):
@@ -150,6 +151,7 @@ if __name__ == "__main__":
         mesh_properties.append(mesh_info)
 
     keys = mesh_properties[0].keys()
+    
 
     path = Path("H:/LODtool/Unreal/LOD_tryout/Content")
     path.mkdir(parents=True, exist_ok=True)

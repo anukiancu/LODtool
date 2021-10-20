@@ -21,7 +21,7 @@ def get_lod_triangles(static_mesh):
 
     for lod_detail_dict in lod_details:
         print(
-            f"LOD number {lod_detail_dict.get('lod_number')} has {lod_detail_dict.get('triangle_count')} triangles.\n"
+            f"LOD number {lod_detail_dict.get('lod_number')} of mesh {static_mesh.get_name()} has {lod_detail_dict.get('triangle_count')} triangles.\n"
         )
 
     return lod_details
