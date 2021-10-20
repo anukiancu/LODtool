@@ -1,7 +1,6 @@
 import unreal
 import csv
 from pathlib import Path
-import os
 
 asset_path = "/Game/Meshes"
 
@@ -30,6 +29,12 @@ def get_s_asset():
     )
     return static_mesh_assets
 
+def get_lod_UVS(obj):
+    lod_no = unreal.EditorStaticMeshLibrary.get_lod_count(obj)
+    for lod in lod_no:
+        uvs = unreal.EditorStaticMeshLibrary.get_num_uv_channels(obj, lod)
+        print(f"LOD numer {lod} has {uvs} UV channels.")
+    return uvs
 
 def get_num_mesh_materials(obj):
     num_of_materials = unreal.EditorStaticMeshLibrary.get_number_materials(obj)
@@ -139,6 +144,7 @@ if __name__ == "__main__":
         lod_screen_size = get_lod_screen_size(asset)
         fucking_hell = get_lod_triangles(asset)
         vertex_density = get_vertex_density(asset)
+        uvs = get_lod_UVS(asset)
         bounds = get_bounds(asset)
         mesh_info["mesh_name"] = mesh_name
         mesh_info["material_count"] = material_count
@@ -148,6 +154,7 @@ if __name__ == "__main__":
         mesh_info["LOD_triangles"] = fucking_hell
         mesh_info["bounding_sphere_radius"] = bounds
         mesh_info["vertex_density"] = vertex_density
+        mesh_info["LOD_UVs"] = uvs
         mesh_properties.append(mesh_info)
 
     keys = mesh_properties[0].keys()
