@@ -16,3 +16,8 @@ for sa in sel_assets:
         if not asset_name.startswith("M_"):
             if not unreal.EditorAssetLibrary.rename_asset(sa.get_path_name(), asset_folder + "/M_" + asset_name):
                 unreal.log_error('Could not rename' + sa.get_path_name())
+
+    elif sa.get_class().get_name() == "StaticMesh":
+        if not asset_name.startswith("SM_"):
+            if not unreal.EditorAssetLibrary.rename_asset(sa.get_path_name(), asset_folder + "/SM_" + asset_name):
+                unreal.log_error("Could not rename" + sa.get_path_name())

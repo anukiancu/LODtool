@@ -1,4 +1,7 @@
 import unreal
+
+
+import unreal
 import csv
 from pathlib import Path
 
@@ -8,7 +11,7 @@ asset_path = "/Game/Meshes"
 def check_lods(static_mesh):
     # Checks number of LODs for each mesh
     lod_no = unreal.EditorStaticMeshLibrary.get_lod_count(static_mesh)
-    print(f"Current LOD count for mesh {mesh_name}: {lod_no}")
+    #print(f"Current LOD count for mesh {mesh_name}: {lod_no}")
     return lod_no
 
 def remove_lods(static_mesh):
@@ -17,7 +20,7 @@ def remove_lods(static_mesh):
 def get_mesh_name(static_mesh):
     # Gets the name of the static mesh
     mesh_name = static_mesh.get_name()
-    print(f"Mesh name: {mesh_name}")
+    #print(f"Mesh name: {mesh_name}")
     return mesh_name
 
 
@@ -31,27 +34,27 @@ def get_s_asset():
 
 def get_lod_UVS(obj):
     lod_no = unreal.EditorStaticMeshLibrary.get_lod_count(obj)
-    for lod in lod_no:
+    for lod in range(lod_no):
         uvs = unreal.EditorStaticMeshLibrary.get_num_uv_channels(obj, lod)
-        print(f"LOD numer {lod} has {uvs} UV channels.")
+        #print(f"LOD numer {lod} has {uvs} UV channels.")
     return uvs
 
 def get_num_mesh_materials(obj):
     num_of_materials = unreal.EditorStaticMeshLibrary.get_number_materials(obj)
-    print(f"Current number of materials for mesh {mesh_name}: {num_of_materials}")
+    #print(f"Current number of materials for mesh {mesh_name}: {num_of_materials}")
     return num_of_materials
 
 
 def get_simple_collision_count(obj):
     collision_count = unreal.EditorStaticMeshLibrary.get_simple_collision_count(obj)
-    print(f"Number of simple collisions present on this mesh: {collision_count}")
+    #print(f"Number of simple collisions present on this mesh: {collision_count}")
     return collision_count
 
 def get_verts(obj):
     lod_no = unreal.EditorStaticMeshLibrary.get_lod_count(obj)
     for lod in range(lod_no):
         verts_no = unreal.EditorStaticMeshLibrary.get_number_verts(obj, lod)
-        print(f"Number of verts for LOD {lod}: {verts_no}")
+        #print(f"Number of verts for LOD {lod}: {verts_no}")
     return verts_no
 
 def get_tri_count(obj):
@@ -66,7 +69,7 @@ def get_tri_count(obj):
         tri_list.append(triangles)
 
     total_tris = num_of_polygons * sum(tri_list)
-    print(f"Number of tris for this mesh: {total_tris}")
+    #print(f"Number of tris for this mesh: {total_tris}")
     return total_tris
 
 
@@ -87,18 +90,7 @@ def get_lod_triangles(static_mesh):
         lod_detail_dict = {"lod_number": lod, "triangle_count": triangle_count / 3}
         lod_details.append(lod_detail_dict)
 
-    for lod_detail_dict in lod_details:
-        print(
-            f"LOD number {lod_detail_dict.get('lod_number')} has {lod_detail_dict.get('triangle_count')} triangles.\n"
-        )
-
     return lod_details
-
-def vertex_colors(obj);
-    vertex_colors = unreal.EditorStaticMeshLibrary.has_vertex_colors(obj)
-    print(f"Mesh has vertex colours: {vertex_colors}")
-    return vertex_colors
-
 
 
 def get_lod_screen_size(obj):
@@ -109,17 +101,13 @@ def get_lod_screen_size(obj):
         lod_screen_size_dict = {"lod_number": lod, "screen_size": lod_screen_size}
         lod_screen_sizes.append(lod_screen_size_dict)
 
-    for lod_screen_size_dict in lod_screen_sizes:
-        print(
-            f"LOD number {lod_screen_size_dict.get('lod_number')} has a screen size of {lod_screen_size_dict.get('screen_size')}")
-        
     return lod_screen_sizes
 
 def get_bounds(obj):
     bounds = obj.get_bounds()
     radius = bounds.sphere_radius
     diameter = radius *2
-    print(f"Bounding sphere diameter of mesh {mesh_name}: {diameter}")
+    #print(f"Bounding sphere diameter of mesh {mesh_name}: {diameter}")
     return diameter
 
 def get_vertex_density(obj):
@@ -130,7 +118,7 @@ def get_vertex_density(obj):
     for lod in range(lod_no):
         verts_no = unreal.EditorStaticMeshLibrary.get_number_verts(obj, lod)
         vertex_density = verts_no/diameter
-        print(f"Vertex density for LOD {lod} : {vertex_density}")
+        #print(f"Vertex density for LOD {lod} : {vertex_density}")
     return vertex_density
 
 
@@ -165,14 +153,20 @@ if __name__ == "__main__":
 
     keys = mesh_properties[0].keys()
     
-
     #path = Path("H:/LODtool/Unreal/LOD_tryout/Content")
     path = unreal.Paths.get_project_file_path()
-    path.mkdir(parents=True, exist_ok=True)
+    path_obj = Path(path)
+    project_directory = path_obj.parent
 
-    file_path = (path / "meshProperties").with_suffix(".csv")
+    file_path = (project_directory / "meshProperties").with_suffix(".csv")
+
+    if file_path.is_file():
+        print("File already exists")
+    else:
+        print(f"Created Excel Report in {project_directory}")
 
     with file_path.open(mode="w+") as output_file:
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
         dict_writer.writerows(mesh_properties)
+
