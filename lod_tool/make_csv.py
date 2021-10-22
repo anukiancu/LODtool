@@ -161,7 +161,7 @@ if __name__ == "__main__":
     file_path = (project_directory / "meshProperties").with_suffix(".csv")
 
     if file_path.is_file():
-        print("File already exists")
+        print("File already exists, please delete the old one and try again.")
     else:
         print(f"Created Excel Report in {project_directory}")
 

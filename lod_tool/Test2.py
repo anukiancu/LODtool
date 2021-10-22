@@ -94,11 +94,10 @@ def get_lod_triangles(static_mesh):
 
     return lod_details
 
-def vertex_colors(obj);
+def vertex_colors(obj):
     vertex_colors = unreal.EditorStaticMeshLibrary.has_vertex_colors(obj)
     print(f"Mesh has vertex colours: {vertex_colors}")
     return vertex_colors
-
 
 
 def get_lod_screen_size(obj):
